@@ -1,0 +1,27 @@
+[package]
+name = "mbconf"
+version = "0.1.0"
+edition = "2024"
+license-file = "LICENSE"
+description = ""
+homepage = "https://github.com/piksel/mbconf"
+repository = "https://github.com/piksel/mbconf"
+readme = "README.md"
+
+[dependencies]
+bitflags = { version = "2.10.0" }
+defmt = { version = "0.3.100" }
+
+[dependencies.strum]
+version = "0.27.2"
+default-features = false
+features = ["derive"]
+
+[dependencies.num_enum]
+version = "0.7.4"
+features = []
+default-features = false
+
+
+[features]
+alloc = []
