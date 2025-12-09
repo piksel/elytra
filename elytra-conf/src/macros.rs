@@ -1,7 +1,7 @@
 
 
 #[macro_export(local_inner_macros)]
-macro_rules! mbconf {
+macro_rules! elytra {
 
     ( 
         info: { $( $i:ident: $ix:expr ),* },
@@ -10,8 +10,9 @@ macro_rules! mbconf {
         actions: { $( $a:ident: $an:expr ),* },
         layout: { $( $ls:path: [ $( $lf:expr ),* ] ),* }
     ) => {
-        #[repr(u8)]
-        #[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]
+
+        // #[repr(u8)]
+        #[derive(Clone, Copy, Debug, PartialEq, Eq)]
         pub enum Action {
             $(
                 $a = ${index()},
@@ -31,8 +32,8 @@ macro_rules! mbconf {
             }
         }
 
-        #[repr(u8)]
-        #[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]
+        // #[repr(u8)]
+        #[derive(Clone, Copy, Debug, PartialEq, Eq)]
         pub enum ConfigField {
             $(
                 $f = ${index()},
@@ -53,8 +54,8 @@ macro_rules! mbconf {
             }
         }
 
-        #[repr(u8)]
-        #[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]
+        // #[repr(u8)]
+        #[derive(Clone, Copy, Debug, PartialEq, Eq)]
         pub enum Section {
             $(
                 $s = ${index()},
@@ -74,8 +75,8 @@ macro_rules! mbconf {
             }
         }
 
-        #[repr(u8)]
-        #[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]
+        // #[repr(u8)]
+        #[derive(Clone, Copy, Debug, PartialEq, Eq)]
         pub enum InfoField {
             $(
                 $i = ${index()},
@@ -116,4 +117,74 @@ macro_rules! mbconf {
             )*],
         );
     };
+}
+
+#[cfg(test)]
+mod test_empty {
+    use crate::prelude::*;
+
+    elytra!{
+        info: {},
+        config: {},
+        sections: {},
+        actions: {},
+        layout: {}
+    }
+
+    #[test]
+    fn test_empty() {
+        assert_eq!(0, PROTO.info_fields.len());
+        assert_eq!(0, PROTO.config_fields.len());
+        assert_eq!(0, PROTO.sections.len());
+        assert_eq!(0, PROTO.actions.len());
+        assert_eq!(0, PROTO.layout.len());
+    }
+}
+
+#[cfg(test)]
+mod test_2 {
+    use crate::prelude::*;
+
+    elytra!{
+        info: {
+            Foo: info("Foo")
+        },
+        config: {
+            One: config("One"),
+            Two: config("Two")
+        },
+        sections: {
+            Top: section("Top"),
+            Mid: section("Mid"),
+            Bot: section("Bot")
+        },
+        actions: {
+            Begin: action("Being"),
+            End: action("End")
+        },
+        layout: {
+            Section::Top: [
+                Field::Info(InfoField::Foo)
+            ],
+            Section::Mid: [
+                Field::Conf(ConfigField::One)
+            ],
+            Section::Bot: [
+                Field::Conf(ConfigField::Two)
+            ]
+        }
+    }
+
+    #[test]
+    fn test_some_entries() {
+        assert_eq!(1, PROTO.info_fields.len());
+        assert_eq!(2, PROTO.config_fields.len());
+        assert_eq!(3, PROTO.sections.len());
+        assert_eq!(2, PROTO.actions.len());
+        assert_eq!([
+            (Section::Top, Field::Info(InfoField::Foo)),
+            (Section::Mid, Field::Conf(ConfigField::One)),
+            (Section::Bot, Field::Conf(ConfigField::Two)),
+        ], PROTO.layout);
+    }
 }

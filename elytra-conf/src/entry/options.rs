@@ -6,6 +6,34 @@ pub trait OptionValueProvider: Debug + Send + Sync {
     fn len(&self) -> usize;
 }
 
+impl OptionValueProvider for [&'static str] {
+    fn get(&self, index: usize) -> Option<&'static str> {
+        if index < self.len() {
+            Some(self[index])
+        } else {
+            None
+        }
+    }
+
+    fn len(&self) -> usize {
+        self.len()
+    }
+}
+
+impl <const S: usize> OptionValueProvider for [&'static str; S] {
+    fn get(&self, index: usize) -> Option<&'static str> {
+        if index < self.len() {
+            Some(self[index])
+        } else {
+            None
+        }
+    }
+
+    fn len(&self) -> usize {
+        S
+    }
+}
+
 // impl Debug for OptionValueProvider {
 //     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
 

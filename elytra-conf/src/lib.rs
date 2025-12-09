@@ -1,7 +1,6 @@
 #![no_std]
 
 #![feature(macro_metavar_expr)]
-#![feature(iter_next_chunk)]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;

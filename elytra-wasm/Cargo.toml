@@ -1,0 +1,13 @@
+[package]
+name = "elytra-wasm"
+version = "0.1.0"
+edition = "2024"
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+readme.workspace = true
+
+[dependencies]
+elytra-conf = { path = "../elytra-conf" }
+wasm-rs-async-executor = { version = "0.9.0", default-features = false, features = []}
+wasm-bindgen = "0.2.106"
