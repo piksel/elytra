@@ -47,27 +47,29 @@ impl FieldValue{
         };
         if fv.is_empty() {
             use DefaultValue::{*};
-
-            fv.data[0] = match desc.default {
+            let mut cursor = Cursor::new(fv.data.as_mut_slice());
+            match desc.default {
+     
                 Bytes(bytes) => {
-                    fv.data[1..].copy_from_slice(bytes);
-                    bytes.len() as u8
+                    cursor.write(&[bytes.len() as u8]).unwrap();
+                    cursor.write(bytes).unwrap();
                 },
-                Empty => 0,
+                Empty => {
+                    cursor.write(&[0]).unwrap();
+                },
                 Text(text) => {
-                    fv.data[1..].copy_from_slice(text.as_bytes());
-                    text.len() as u8
+                    cursor.write(&[text.len() as u8]).unwrap();
+                    cursor.write(text.as_bytes()).unwrap();
                 },
                 Integer(integer) => {
-                    fv.data[1..].copy_from_slice(&integer.to_le_bytes());
-                    4
+                    cursor.write(&[4]).unwrap();
+                    cursor.write(&integer.to_le_bytes()).unwrap();
                 }
                 Options(items) => {
-                    let mut cursor = Cursor::new(&mut fv.data[1..]);
+                    cursor.write(&[items.len() as u8]).unwrap();
                     for i in 0..items.len() {
                         cursor.write(&items[i].to_le_bytes()).unwrap();
                     }
-                    items.len() as u8
                 },
             }
         }

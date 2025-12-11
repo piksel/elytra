@@ -69,7 +69,7 @@ impl ElytraDevice for WasmDevice {
             .unwrap();
         
 
-        let res_pack_count: u32 = send_fn.call(&mut self.store, msg_in).unwrap();
+        let res_pack_count: u32 = send_fn.call(&mut self.store, msg_in)?;
 
         if res_pack_count == 0 {
             return Err(eyre!("Error response from WASM device"))?

@@ -16,7 +16,7 @@ pub const PAYLOAD_SIZE: usize = MESSAGE_LENGTH - 1;
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum EntryType {
     Action = b'a',
-    Prop = b'c',
+    Prop = b'p',
     Info = b'i',
     Section = b's',
 }

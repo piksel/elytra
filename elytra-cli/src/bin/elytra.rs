@@ -47,6 +47,9 @@ enum Commands {
     /// Query for basic information
     Info,
 
+    /// Query for field value
+    Value(ValueArgs),
+
     /// Send a specific query command
     Query(QueryArgs),
 
@@ -80,9 +83,16 @@ fn main() -> Result<(), Box<dyn Error>> {
         Commands::Tui => tui::run(device),
         Commands::Query(args) => run_query(device, args),
         Commands::Info => run_info(device),
+        Commands::Value(ValueArgs{entry, index}) => run_value(device, entry, index),
         Commands::Sections => run_sections(device),
     }
 
+}
+
+#[derive(Debug, Args)]
+struct ValueArgs {
+    entry: char,
+    index: u8,
 }
 
 #[derive(Debug, Args)]
@@ -91,6 +101,15 @@ struct QueryArgs {
     index: u8,
     #[arg(value_parser = parse_query_prop)]
     prop: QueryTargetKey
+}
+
+fn run_value(mut device: Box<dyn ElytraDevice + 'static>, entry_type: char, index: u8) -> Result<(), Box<dyn Error>> {
+    let res = device.get_value((entry_type as u8).try_into()?, index);
+    if let Err(e) = res {
+        println!("Error: {e:?}");
+    }
+    print_log(device.get_log());
+    Ok(())
 }
 
 fn run_info(mut device: Box<dyn ElytraDevice + 'static>) -> Result<(), Box<dyn Error>> {

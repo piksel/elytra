@@ -1,7 +1,7 @@
 use std::{error::Error, io::Write};
 
 use color_eyre::eyre::{eyre};
-use elytra_conf::{command::CommandKey, config::QueryTargetKey, entry::ExtraFlags};
+use elytra_conf::{command::CommandKey, config::{EntryType, QueryTargetKey}, entry::ExtraFlags};
 
 pub mod wasm;
 pub mod tcp;
@@ -102,6 +102,15 @@ impl dyn ElytraDevice {
     pub fn get_extra(&mut self, vt: u8, index: u8, q: u8) -> Result<String, Box<dyn Error>>  {
         let res = self.send_command(&[b'q', vt, index, q])?;
         Ok(String::from_utf8_lossy(&res[1..]).trim_end_matches('\0').to_string())
+    }
+
+    pub fn get_value(&mut self, entry_type: EntryType, index: u8) -> Result<[u8; 64], Box<dyn Error>>  {
+        let res = match entry_type {
+            EntryType::Info => self.send_command(&[CommandKey::ReadInfo as u8, index])?,
+            EntryType::Prop => self.send_command(&[CommandKey::ReadProp as u8, index])?,
+            et => Err(eyre!("Invalid entry type {et:?}"))?,
+        };
+        Ok(res)
     }
 
     pub fn get_layout(&mut self, index: u8) -> Result<Vec<LayoutEntry>, Box<dyn Error>>  {
