@@ -6,6 +6,7 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 readme.workspace = true
+description = "command line tools for interacting with elytra devices"
 
 [dependencies]
 elytra-conf = { workspace = true }
