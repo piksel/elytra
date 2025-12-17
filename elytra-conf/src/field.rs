@@ -32,7 +32,7 @@ impl FieldValue{
     }
 
     #[allow(unused)]
-    const fn len(&self) -> usize {
+    pub const fn len(&self) -> usize {
         self.data[0] as usize
     }
 
@@ -49,7 +49,6 @@ impl FieldValue{
             use DefaultValue::{*};
             let mut cursor = Cursor::new(fv.data.as_mut_slice());
             match desc.default {
-     
                 Bytes(bytes) => {
                     cursor.write(&[bytes.len() as u8]).unwrap();
                     cursor.write(bytes).unwrap();
@@ -64,7 +63,11 @@ impl FieldValue{
                 Integer(integer) => {
                     cursor.write(&[4]).unwrap();
                     cursor.write(&integer.to_le_bytes()).unwrap();
-                }
+                },
+                Enabled(enabled) => {
+                    cursor.write(&[1]).unwrap();
+                    cursor.write(&[if enabled {1u8} else {0u8}]).unwrap();
+                },
                 Options(items) => {
                     cursor.write(&[items.len() as u8]).unwrap();
                     for i in 0..items.len() {
@@ -225,6 +228,15 @@ impl FieldValue{
         // }
     }
 
+    pub fn get_enabled(&self) -> bool {
+        self.data[1] == 1
+    }
+
+    pub fn set_enabled(&mut self, value: bool) {
+        self.data[1] = if value {1} else {0};
+        self.set_len(1);
+    }
+
     pub fn clamp(&mut self) {
         match self.desc.variant {
             EntryVariant::Field(field_type) => match field_type {
@@ -241,6 +253,7 @@ impl FieldValue{
                 },
                 ValueType::Status => {},
                 ValueType::Bytes => {},
+                ValueType::Toggle => {},
                 ValueType::Options => {
                     self.set_options(self.get_options().as_slice());
                 }

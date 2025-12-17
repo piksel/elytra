@@ -34,7 +34,7 @@ bitflags! {
 }
 
 #[cfg(feature = "defmt")]
-impl Format for ExtraFlags {
+impl defmt::Format for ExtraFlags {
     fn format(&self, fmt: defmt::Formatter) {
         defmt::write!(fmt, "[");
         for (i, (name, _)) in self.iter_names().enumerate() {
@@ -97,7 +97,7 @@ impl defmt::Format for Constraints {
             Constraints::None => defmt::write!(fmt, "NoneConstraints"),
             Constraints::Range(range) => defmt::write!(fmt, "RangeConstraint({}, {})", range.start, range.end),
             Constraints::Length(len) => defmt::write!(fmt, "LengthConstraints({})", len),
-            Constraints::Values(ovp) => defmt::write!(fmt, "ValuesConstraints({}, {}, {}, {})", ovp.value_provider.len(), ovp.suggested, ovp.min, ovp.max),
+            Constraints::Values(ovp) => defmt::write!(fmt, "ValuesConstraints({}, {}, {})", ovp.value_provider.len(), ovp.min, ovp.max_or_suggested),
         }
     }
 }
@@ -179,12 +179,14 @@ impl EntryDesc {
                 (ValueType::Text, DefaultValue::Text(_)) => {},
                 (ValueType::Secret, DefaultValue::Text(_)) => {},
                 (ValueType::Options, DefaultValue::Options(_)) => {},
+                (ValueType::Toggle, DefaultValue::Enabled(_)) => {},
                 (_, DefaultValue::Empty) => {},
                 (ValueType::Status, _) => panic!("Status value type cannot have a default value"),
                 (_, DefaultValue::Integer(_)) => panic!("Integer is not a valid default value for this field"),
                 (_, DefaultValue::Bytes(_)) => panic!("Bytes is not a valid default value for this field"),
                 (_, DefaultValue::Text(_)) => panic!("Text is not a valid default value for this field"),
                 (_, DefaultValue::Options(_)) => panic!("Options is not a valid default value for this field"),
+                (_, DefaultValue::Enabled(_)) => panic!("Enabled is not a valid default value for this field"),
             }
         }
         match (&constraints, &default) {

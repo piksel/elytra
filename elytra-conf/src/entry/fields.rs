@@ -139,6 +139,13 @@ impl FieldEntry {
         }
     }
 
+    pub const fn with_default_enabled(self, value: bool) -> Self {
+        Self {
+            default: DefaultValue::Enabled(value),
+            ..self
+        }
+    }
+
     pub const fn with_max_options(self, max: u16) -> Self {
         let Constraints::Values(values) = self.constraints else {
             panic!("field does not have values constraint");
@@ -205,6 +212,20 @@ pub const fn integer(name: &'static str) -> InfoEntry {
         value_type: ValueType::Integer,
         constraints: Constraints::None,
         readonly: None,
+        help: None,
+        icon: None,
+        default: DefaultValue::Empty,
+        multi: false,
+    }
+}
+
+#[allow(unused)]
+pub const fn toggle(name: &'static str) -> PropEntry {
+    InfoEntry {
+        name,
+        value_type: ValueType::Toggle,
+        constraints: Constraints::None,
+        readonly: Some(false),
         help: None,
         icon: None,
         default: DefaultValue::Empty,

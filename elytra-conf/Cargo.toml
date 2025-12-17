@@ -27,10 +27,11 @@ default-features = false
 
 
 [features]
-default = ["macros"]
+default = ["macros", "defmt", "nightly"]
 alloc = []
 defmt = ["dep:defmt"]
 macros = []
+nightly = []
 
 # only used to hide warnings about unused code
 unused = []

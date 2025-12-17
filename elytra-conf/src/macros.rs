@@ -1,7 +1,11 @@
+#[cfg(feature = "nightly")]
 #[macro_export]
 macro_rules! indexed_entry {
-    ($indexty:ty: $name:ident { $( $s:ident: $sx:expr ),+ }) => {
+    // For enums with entries
+    ($indexty:ty: $([$($pattr:tt)+])? $name:ident { $( $s:ident: $sx:expr ),+ } $($attr:tt)?) => {
+        $(($($pattr)+))?
         #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+        $($attr)?
         pub enum $name {
             $(
                 $s = ${index()},
@@ -32,7 +36,9 @@ macro_rules! indexed_entry {
             )*];
         }
     };
+    // For empty enums
     ($indexty:ty: $name:ident) => {
+        
         #[derive(Debug, PartialEq, Eq, Copy, Clone)]
         pub struct $name;
         impl $indexty for $name {
@@ -52,6 +58,73 @@ macro_rules! indexed_entry {
     };
 }
 
+macro_rules! indexed_entry2 {
+    ( $( $name:ident: $ixty:ty ),* ) => {
+        $(
+        macro_rules! $name {
+            ($indexty:ty: $name:ident { $$( $s:ident: $sx:expr ),+ }?) => {
+                #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+                pub enum $name {
+                    $$(
+                        $$s = $${index()},
+                    )*
+                }
+                impl $indexty for $name {
+                    fn as_index(self) -> usize {
+                        self as usize
+                    }
+                    fn from_byte(byte: u8) -> Option<Self> {
+                        match byte {
+                            $$(
+                                $${index()} => Some(Self::$$s),
+                            )*
+                            _ => None
+                        }
+                    }
+                    fn get_entry(self) -> &'static $crate::entry::EntryDesc {
+                        &Self::ENTRIES[self.as_index()]
+                    }
+                    fn count() -> usize {
+                        Self::ENTRIES.len()
+                    }
+                }
+                impl $name {
+                    pub const ENTRIES: [$crate::entry::EntryDesc; $${count($$sx)}] = [$$(
+                        $sx.as_entry(),
+                    )*];
+                }
+            };
+            ($indexty:ty: $name:ident) => {
+                
+                #[derive(Debug, PartialEq, Eq, Copy, Clone)]
+                pub struct $name;
+                impl $indexty for $name {
+                    fn as_index(self) -> usize {
+                        panic!("empty index")
+                    }
+                    fn from_byte(_: u8) -> Option<Self> {
+                        None
+                    }
+                    fn get_entry(self) -> &'static $crate::entry::EntryDesc {
+                        panic!("empty index")
+                    }
+                    fn count() -> usize {
+                        0
+                    }
+                }
+            };
+        }
+        )*
+    }
+}
+
+#[allow(unused)]
+mod macro2 {
+indexed_entry2!(sections2: SectionIndex);
+}
+
+
+#[cfg(feature = "macros")]
 #[macro_export(local_inner_macros)]
 macro_rules! sections {
     ($name:ident {}) => {
@@ -65,6 +138,7 @@ macro_rules! sections {
     };
 }
 
+#[cfg(feature = "macros")]
 #[macro_export(local_inner_macros)]
 macro_rules! actions {
     ($name:ident {}) => {
@@ -78,6 +152,7 @@ macro_rules! actions {
     };
 }
 
+#[cfg(feature = "macros")]
 #[macro_export(local_inner_macros)]
 macro_rules! infos {
     ($name:ident {}) => {
@@ -91,6 +166,7 @@ macro_rules! infos {
     };
 }
 
+#[cfg(feature = "macros")]
 #[macro_export(local_inner_macros)]
 macro_rules! props {
     ($name:ident {}) => {
@@ -99,11 +175,12 @@ macro_rules! props {
     ($name:ident) => {
         indexed_entry!($crate::PropIndex: $name);
     };
-    ($name:ident { $($s:tt)+ }) => {
-        indexed_entry!($crate::PropIndex: $name { $($s)+ } );
+    ($name:ident $([$($pattr:tt)+])? { $($s:tt)+ }) => {
+        indexed_entry!($crate::PropIndex: $([$($pattr)+])? $name { $($s)+ } );
     };
 }
 
+#[cfg(feature = "nightly")]
 #[macro_export(local_inner_macros)]
 macro_rules! elytra {
     ($cvis:vis $cident:ident: $tident:ident {
@@ -140,7 +217,7 @@ macro_rules! elytra {
     };
     ( $cvis:vis $cident:ident: $tident:ident {
         info: $i:ident { $($ix:tt)* },
-        props: $p:ident { $($px:tt)* },
+        props: $([$($pattr:tt)+])? $p:ident { $($px:tt)* },
         sections: $s:ident { $($sx:tt)* },
         actions: $a:ident { $($ax:tt)* },
         layout: { $( $ls:path: [ $( $lf:expr ),* ] ),* }
@@ -149,7 +226,7 @@ macro_rules! elytra {
         actions!($a { $($ax)* });
         sections!($s { $($sx)* });
         infos!($i { $($ix)* });
-        props!($p { $($px)* });
+        props!($p $([$($pattr)+])? { $($px)* });
 
         pub type $tident = $crate::config::Config<${count($lf)}, $s, $p, $i, $a>;
         $cvis const $cident: $tident = $crate::config::Config::new(
@@ -200,7 +277,7 @@ mod test {
                 Bot: section("Bot")
             },
             actions: Action {
-                Begin: action("Being"),
+                Begin: action("Begin"),
                 End: action("End")
             },
             layout: {

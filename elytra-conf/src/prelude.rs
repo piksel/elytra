@@ -13,6 +13,6 @@ pub use super::config::Config;
 #[allow(unused_imports)] 
 pub use super::entry::{
     ActionEntry, ActionVariant, FieldEntry, InfoEntry, PropEntry, SectionEntry, Field, 
-    info, bytes, section, action, secret, status, integer, option, prop,
+    info, bytes, section, action, secret, status, integer, option, prop, toggle,
     options::OptionValueProvider,
 };

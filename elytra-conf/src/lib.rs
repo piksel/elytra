@@ -1,5 +1,5 @@
 #![no_std]
-#![cfg_attr(feature = "macros", feature(macro_metavar_expr))]
+#![cfg_attr(feature = "nightly", feature(macro_metavar_expr))]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;

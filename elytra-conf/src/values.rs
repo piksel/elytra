@@ -12,6 +12,7 @@ pub enum ValueType {
     Status = 'c' as u8,
     Bytes = 'b' as u8,
     Options = 'o' as u8,
+    Toggle = 'x' as u8
 }
 impl ValueType {
     pub(crate) fn is_options(&self) -> bool {
@@ -30,6 +31,7 @@ pub enum DefaultValue {
     Integer(i64),
     Options(&'static [u16]),
     Bytes(&'static [u8]),
+    Enabled(bool)
 }
 
 impl From<&'static str> for DefaultValue {
