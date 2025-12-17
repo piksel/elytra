@@ -8,4 +8,4 @@ repository.workspace = true
 readme.workspace = true
 
 [dependencies]
-elytra-conf = { path = "../elytra-conf" }
+elytra-conf = { workspace = true, version = "1.0.1" }

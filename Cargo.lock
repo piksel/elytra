@@ -235,7 +235,6 @@ dependencies = [
  "chrono",
  "chrono-tz",
  "elytra-conf",
- "elytra-macros",
  "elytra-wasm",
  "log",
 ]

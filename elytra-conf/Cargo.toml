@@ -12,7 +12,7 @@ version.workspace = true
 bitflags = { version = "2.10.0" }
 log = { workspace = true }
 defmt = {version = "1.0", optional = true}
-elytra-bytepack = { path = "../elytra-bytepack" }
+elytra-bytepack = { workspace = true }
 
 
 [dependencies.strum]

@@ -12,3 +12,6 @@ package.readme = "README.md"
 
 # shared dependencies
 dependencies.log = { version = "0.4" }
+dependencies.elytra-conf = { version = "0.1.0", path = "elytra-conf" }
+dependencies.elytra-wasm = { version = "0.1.0", path = "elytra-wasm" }
+dependencies.elytra-bytepack = { version = "0.1.0", path = "elytra-bytepack" }

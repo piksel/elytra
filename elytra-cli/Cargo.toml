@@ -8,14 +8,14 @@ repository.workspace = true
 readme.workspace = true
 
 [dependencies]
-elytra-conf = { path = "../elytra-conf" }
+elytra-conf = { workspace = true }
 owo-colors = "4"
 color-eyre = "0.6.3"
 crossterm = "0.28.1"
 ratatui = "0.29.0"
 clap = { version = "4.5.53", features = ["derive"]}
 itertools = "0.13"
-log = "0.4.29"
+log = { workspace = true }
 
 wasmi = {version = "1.0.3", features = ["std"], optional = true}
 wasmtime = { version = "39.0.1", default-features = false, features = ["runtime", "cranelift"], optional = true }
