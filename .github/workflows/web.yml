@@ -1,9 +1,11 @@
 name: Deployment
 on:
+  workflow_dispatch: 
   push:
     branches:
       - main
     paths:
+      - ".github/workflows/web.yml"
       - "docs/src/**.md"
       - "docs/book.toml"
       - "elytra-web/*"
