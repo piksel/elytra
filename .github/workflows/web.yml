@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: dist
-          path: dist
+          path: elytra-web/dist
   deploy:
     runs-on: ubuntu-latest
     needs: [build]
