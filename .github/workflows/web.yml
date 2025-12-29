@@ -36,7 +36,7 @@ jobs:
           npm run build
 
       - name: Archive dist
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6
         with:
           name: dist
           path: dist
@@ -54,7 +54,7 @@ jobs:
           ref: 'web'
 
       - name: Download dist
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v7
         with:
           name: dist
           path: dist
