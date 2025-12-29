@@ -1,0 +1,8 @@
+{
+    "urls": {
+        "firmware": "https://github.com/piksel/mysklocka/releases",
+        "documentation": "https://github.com/piksel/mysklocka/wiki",
+        "image": "https://mysklocka.p1k.se/devices/piksel_bitworks/mysklocka/device.svg"
+    },
+    "description": "Bedside clock (no alarm) that always shows the right time on a clearly lit (but not distractingly so) display."
+}

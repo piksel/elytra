@@ -1,0 +1,1 @@
+import{c as e}from"./index-D8O-KMR2.js";const t=[["rect",{width:"18",height:"18",x:"3",y:"3",rx:"2",key:"afitv7"}],["path",{d:"M8 12h8",key:"1wcyev"}]],a=e("square-minus",t);export{t as __iconNode,a as default};
