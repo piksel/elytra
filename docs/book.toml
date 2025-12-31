@@ -2,3 +2,13 @@
 title = "Elytra"
 authors = ["nils måsén"]
 language = "en"
+
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+[output.html]
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
+additional-css = ["theme/css/elytra-highlight.css"]
+default-theme = "elytra"
+preferred-dark-theme = "elytra"
