@@ -29,9 +29,9 @@ export const OptionElytraField: FC<Omit<Props, "onReloadValue">> = (props) => {
    
 <Combobox.Root
       collection={collection}
-      onInputValueChange={(e) => filter(e.inputValue)}
-      value={value ? [value.toString()] : []}
-      onValueChange={e => e.value.length && onValueChange(e.value[0])}
+      onInputValueChange={(e) => { filter(e.inputValue); onValueChange(e.inputValue)}}
+      inputValue={value.toString()}
+      allowCustomValue={true}
     >
       <Combobox.Label>{field.name}</Combobox.Label>
       <Combobox.Control>

@@ -29,10 +29,7 @@ export const ElytraField: FC<Props> = (props) => {
     }
     
     if (field.flags.hasOptions) {
-        return <>
-        {field.options.some(e => !!e) ? 
-        <OptionElytraField field={field} value={value} onValueChange={onValueChange} />
-        : <></>}</>
+        return <OptionElytraField field={field} value={value} onValueChange={onValueChange} />
     }
 
   return <>
