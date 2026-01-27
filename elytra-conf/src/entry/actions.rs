@@ -1,4 +1,4 @@
-use crate::{entry::{Constraints, EntryDesc, EntryVariant}, values::DefaultValue};
+use crate::{entry::{Constraints, EntryDesc, EntryVariant, ExtraFlags}, values::DefaultValue};
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -41,12 +41,11 @@ impl ActionEntry {
         EntryDesc::new( 
             self.name, 
             EntryVariant::Action(self.variant), 
-            true, 
             Constraints::None, 
             self.help, 
             self.icon,
             DefaultValue::Empty,
-            false,
+            ExtraFlags::ReadOnly,
         )
     }
     pub const fn with_icon(self, icon: &'static str) -> Self {

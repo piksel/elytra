@@ -25,11 +25,15 @@ use super::{
 bitflags! {
     #[derive(Debug, Eq, PartialEq, Clone, Copy)]
     pub struct ExtraFlags: u8 {
+        /// Flag inidicating that the writing to the field is not supported
         const ReadOnly = 1 << 0;
         const HasHelp = 1 << 1;
         const HasIcon = 1 << 2;
         const HasOptions = 1 << 3;
-        const IsMulti = 1 << 4;
+        /// Flag indicating that the options changes over time and can be refreshed
+        const DynOpts = 1 << 4;
+        /// Flag indicating that the value changes over time and can be refreshed
+        const DynValue = 1 << 5;
     }
 }
 
@@ -150,25 +154,23 @@ impl Constraints {
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct EntryDesc {
     pub variant: EntryVariant,
-    pub readonly: bool,
     pub name: &'static str,
     pub constraints: Constraints,
     pub help: Option<&'static str>,
     pub icon: Option<&'static str>,
     pub default: DefaultValue,
-    pub multi: bool,
+    pub flags: ExtraFlags,
 }
 
 impl EntryDesc {
     pub const fn new(
         name: &'static str,
         variant: EntryVariant,
-        readonly: bool,
         constraints: Constraints,
         help: Option<&'static str>,
         icon: Option<&'static str>,
         default: DefaultValue,
-        multi: bool,
+        flags: ExtraFlags,
     ) -> Self {
         if name.len() == 0 { panic!("name is required"); }
         if name.as_bytes().len() > Self::MAX_ENTRY_NAME_LEN { panic!("name is too long") }
@@ -197,22 +199,19 @@ impl EntryDesc {
         Self {
             name,
             variant,
-            readonly,
             constraints,
             help,
             icon,
             default,
-            multi,
+            flags,
         }
     }
 
     pub fn flags(&self) -> ExtraFlags {
-        let mut flags = ExtraFlags::empty();
-        flags.set(ExtraFlags::ReadOnly, self.readonly);
+        let mut flags = self.flags.clone();
         flags.set(ExtraFlags::HasHelp, self.help.is_some());
         flags.set(ExtraFlags::HasIcon, self.icon.is_some());
         flags.set(ExtraFlags::HasOptions, self.constraints.is_values());
-        flags.set(ExtraFlags::IsMulti, self.multi);
         flags
     }
 

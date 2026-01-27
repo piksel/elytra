@@ -3,6 +3,9 @@ use num_enum::TryFromPrimitive;
 use core::{panic, slice};
 use core::prelude::rust_2024::{*};
 
+#[cfg(feature = "alloc")]
+use alloc::borrow::Cow;
+
 use crate::config::{EntryIndex, EntryType, QueryTarget, QueryTargetKey};
 use crate::{ActionIndex, InfoIndex, PropIndex, SectionIndex};
 use crate::{
@@ -87,6 +90,14 @@ impl From<&'static str> for CommandResponse {
     }
 }
 
+#[cfg(feature = "alloc")]
+impl From<Cow<'static, str>> for CommandResponse {
+    fn from(value: Cow<'static, str>) -> Self {
+        let str_len: usize = value.floor_char_boundary(value.len().min(PAYLOAD_SIZE));
+        CommandResponse::from_payload(value.bytes().take(str_len))
+    }
+}
+
 impl From<Result<CommandResponse, CommandError>> for CommandResponse {
     fn from(result: Result<CommandResponse, CommandError>) -> Self {
         result.unwrap_or_else(CommandResponse::error)
@@ -105,10 +116,6 @@ pub enum CommandKey {
     Meta = 'm' as u8,
     Noop = 0,
 }
-
-// pub enum QueryArgs {
-//     entry_type: EntryType
-// }
 
 pub enum Command<A: ActionIndex, P: PropIndex, I: InfoIndex, S: SectionIndex> {
     ReadProp(P),

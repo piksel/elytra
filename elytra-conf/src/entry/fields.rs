@@ -1,10 +1,10 @@
 use core::ops::Range;
 
 use crate::{
-    traits::{PropIndex, InfoIndex},
-    entry::{Constraints, EntryDesc, EntryVariant, ValueConstraints}, 
-    prelude::OptionValueProvider, 
     config::EntryType, 
+    entry::{Constraints, EntryDesc, EntryVariant, ExtraFlags, ValueConstraints}, 
+    prelude::OptionValueProvider, 
+    traits::{InfoIndex, PropIndex}, 
     values::{DefaultValue, ValueType}
 };
 
@@ -35,7 +35,7 @@ pub struct FieldEntry {
     pub help: Option<&'static str>,
     pub icon: Option<&'static str>,
     pub default: DefaultValue,
-    pub multi: bool,
+    pub flags: ExtraFlags,
 }
 
 #[allow(unused)]
@@ -44,15 +44,21 @@ impl FieldEntry {
         let Some(readonly) = self.readonly else {
             panic!("proto field writable configuration is ambigous: use .writable() or .readonly()") 
         };
+        
+        let flags = if readonly {
+            self.flags.union(ExtraFlags::ReadOnly)
+        } else {
+            self.flags.difference(ExtraFlags::ReadOnly)
+        };
+
         EntryDesc::new(
             self.name, 
             EntryVariant::Field(self.value_type), 
-            readonly,
             self.constraints, 
             self.help, 
             self.icon,
             self.default,
-            self.multi,
+            flags,
         )
     }
     pub const fn with_icon(self, icon: &'static str) -> Self {
@@ -88,6 +94,30 @@ impl FieldEntry {
     pub const fn readonly(self) -> Self {
         Self {
             readonly: Some(true),
+            ..self
+        }
+    }
+    pub const fn with_dynamic_options(self) -> Self {
+        Self {
+            flags: self.flags.union(ExtraFlags::DynOpts),
+            ..self
+        }
+    }
+    pub const fn with_static_options(self) -> Self {
+        Self {
+            flags: self.flags.difference(ExtraFlags::DynValue),
+            ..self
+        }
+    }
+    pub const fn with_dynamic_value(self) -> Self {
+        Self {
+            flags: self.flags.union(ExtraFlags::DynValue),
+            ..self
+        }
+    }
+    pub const fn with_static_value(self) -> Self {
+        Self {
+            flags: self.flags.difference(ExtraFlags::DynValue),
             ..self
         }
     }
@@ -173,7 +203,7 @@ pub const fn bytes(name: &'static str, size: u8) -> FieldEntry {
         help: None,
         icon: None,
         default: DefaultValue::Empty,
-        multi: false,
+        flags: ExtraFlags::empty(),
     }
 }
 
@@ -187,7 +217,7 @@ pub const fn secret(name: &'static str) -> PropEntry {
         help: None,
         icon: None,
         default: DefaultValue::Empty,
-        multi: false,
+        flags: ExtraFlags::empty(),
     }
 }
 
@@ -201,7 +231,7 @@ pub const fn status(name: &'static str) -> InfoEntry {
         help: None,
         icon: None,
         default: DefaultValue::Empty,
-        multi: false,
+        flags: ExtraFlags::DynValue,
     }
 }
 
@@ -215,7 +245,7 @@ pub const fn integer(name: &'static str) -> InfoEntry {
         help: None,
         icon: None,
         default: DefaultValue::Empty,
-        multi: false,
+        flags: ExtraFlags::empty(),
     }
 }
 
@@ -229,7 +259,7 @@ pub const fn toggle(name: &'static str) -> PropEntry {
         help: None,
         icon: None,
         default: DefaultValue::Empty,
-        multi: false,
+        flags: ExtraFlags::empty(),
     }
 }
 
@@ -246,7 +276,7 @@ pub const fn option(name: &'static str, value_provider: &'static dyn OptionValue
         help: None,
         icon: None,
         default: DefaultValue::Empty,
-        multi: false,
+        flags: ExtraFlags::empty(),
     }
 }
 
@@ -261,7 +291,7 @@ pub const fn info(name: &'static str) -> InfoEntry {
         help: None,
         icon: None,
         default: DefaultValue::Empty,
-        multi: false,
+        flags: ExtraFlags::DynValue,
     }
 }
 
@@ -276,6 +306,6 @@ pub const fn prop(name: &'static str) -> PropEntry {
         help: None,
         icon: None,
         default: DefaultValue::Empty,
-        multi: false,
+        flags: ExtraFlags::empty(),
     }
 }

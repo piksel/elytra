@@ -1,4 +1,4 @@
-use crate::{entry::{Constraints, EntryDesc, EntryVariant}, values::DefaultValue};
+use crate::{entry::{Constraints, EntryDesc, EntryVariant, ExtraFlags}, values::DefaultValue};
 
 
 #[derive(Debug, Eq, PartialEq)]
@@ -15,12 +15,11 @@ impl SectionEntry {
         EntryDesc::new(
             self.name, 
             EntryVariant::Section, 
-            true,
             Constraints::None,
             self.help, 
             self.icon,
             DefaultValue::Empty,
-            false
+            ExtraFlags::ReadOnly,
         )
     }
     pub const fn with_icon(self, icon: &'static str) -> Self {

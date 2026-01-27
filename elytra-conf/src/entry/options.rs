@@ -1,15 +1,24 @@
 use core::fmt::Debug;
 use core::option::Option;
 
+#[cfg(feature = "alloc")]
+use alloc::borrow::Cow;
+
+#[cfg(feature = "alloc")]
+pub type OptionValue = Option<Cow<'static, str>>;
+#[cfg(not(feature = "alloc"))]
+pub type OptionValue = Option<&'static str>;
+
 pub trait OptionValueProvider: Debug + Send + Sync {
-    fn get(&self, index: usize) -> Option<&'static str>;
+    fn get(&self, index: usize) -> OptionValue;
+
     fn len(&self) -> usize;
 }
 
 impl OptionValueProvider for [&'static str] {
-    fn get(&self, index: usize) -> Option<&'static str> {
+    fn get(&self, index: usize) -> OptionValue {
         if index < self.len() {
-            Some(self[index])
+            Some(self[index].into())
         } else {
             None
         }
@@ -21,9 +30,9 @@ impl OptionValueProvider for [&'static str] {
 }
 
 impl <const S: usize> OptionValueProvider for [&'static str; S] {
-    fn get(&self, index: usize) -> Option<&'static str> {
+    fn get(&self, index: usize) -> OptionValue {
         if index < self.len() {
-            Some(self[index])
+            Some(self[index].into())
         } else {
             None
         }

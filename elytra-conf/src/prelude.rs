@@ -14,5 +14,5 @@ pub use super::config::Config;
 pub use super::entry::{
     ActionEntry, ActionVariant, FieldEntry, InfoEntry, PropEntry, SectionEntry, Field, 
     info, bytes, section, action, secret, status, integer, option, prop, toggle,
-    options::OptionValueProvider,
+    options::{ OptionValueProvider, OptionValue }
 };
