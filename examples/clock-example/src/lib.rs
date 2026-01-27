@@ -9,8 +9,8 @@ pub mod handler;
 #[derive(Debug)]
 struct TimeZoneOpts{}
 impl OptionValueProvider for TimeZoneOpts {
-    fn get(&self, index: usize) -> Option<&'static str> {
-        TZ_VARIANTS.get(index).map(|tz| tz.name())
+    fn get(&self, index: usize) -> OptionValue {
+        TZ_VARIANTS.get(index).map(|tz| tz.name().into())
     }
 
     fn len(&self) -> usize {

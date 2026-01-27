@@ -209,7 +209,7 @@ impl <'s: 'static, const L: usize, S: SectionIndex, P: PropIndex, I: InfoIndex, 
                     return Err(CommandError::NotSupported)
                 };
                 constr.value_provider.get(option_index as usize)
-                    .ok_or(CommandError::InvalidOption).map(|s| (*s).into())
+                    .ok_or(CommandError::InvalidOption).map(|s| s.into())
             },
             Layout => match entry_index {
                         EntryIndex::Section(si) => Ok( self.section_layout(si)),
