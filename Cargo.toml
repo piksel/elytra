@@ -3,7 +3,7 @@ resolver = "3"
 members = ["elytra-conf", "elytra-wasm", "elytra-cli", "elytra-bytepack", "elytra-macros", "examples/clock-example"]
 
 # shared package meta
-package.version = "0.1.0"
+package.version = "0.2.0"
 package.authors = ["nils måsén <nils@piksel.se>"]
 package.license = "MIT"
 package.homepage = "https://github.com/piksel/elytra"
@@ -12,6 +12,6 @@ package.readme = "README.md"
 
 # shared dependencies
 dependencies.log = { version = "0.4" }
-dependencies.elytra-conf = { version = "0.1.0", path = "elytra-conf" }
-dependencies.elytra-wasm = { version = "0.1.0", path = "elytra-wasm" }
-dependencies.elytra-bytepack = { version = "0.1.0", path = "elytra-bytepack" }
+dependencies.elytra-conf = { version = "0.2.0", path = "elytra-conf" }
+dependencies.elytra-wasm = { version = "0.2.0", path = "elytra-wasm" }
+dependencies.elytra-bytepack = { version = "0.2.0", path = "elytra-bytepack" }
